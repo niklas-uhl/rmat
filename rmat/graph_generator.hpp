@@ -30,7 +30,13 @@ public:
     using node_t = typename rmat_t::node;
     graph_generator(const rmat_t &r, size_t block_size)
         : r_(r)
-        , block_size_(block_size) {}
+        , block_size_(block_size) {
+        std::string output = r_.get_output_file();
+        fout = fopen(output.c_str(), "w+");
+        }
+    ~graph_generator() {
+        fclose(fout);
+    }
 
     void get_edges_static(size_t num_edges, size_t seed, const bool debug = true) const {
         tlx::Aggregate<double> thread_stats;
@@ -108,19 +114,24 @@ protected:
                          degree_dist<node_t> &thread_deg_stats) const {
         rmat::timer t;
         RNG gen(seed + block);
-        std::vector<std::pair<node_t, node_t>> dummy(1);
-        std::string output = r_.get_output_file();
-        FILE *fout = fopen(output.c_str(), "w+");
+        std::vector<std::pair<node_t, node_t>> edges;
+        //  std::string output = r_.get_output_file() + std::to_string(block);
+        // FILE *fout = fopen(output.c_str(), "w+");
         auto log_cb = [&](const node_t &src, const node_t &dst) {
-            fprintf(fout, "e %lu %lu\n", src, dst);
+            //fprintf(fout, "%lu %lu\n", src, dst);
+            edges.emplace_back(src, dst);
         };
         r_.get_edges(log_cb, min, max, gen);
-        fclose(fout);
+        //fclose(fout);
+        for (std::pair<node_t, node_t> edge : edges) {
+            fprintf(fout, "%lu %lu\n", edge.first, edge.second);
+        }
         double duration = t.get();
         sLOGC(verbose) << "Block" << block << "time" << duration;
         return duration;
     }
 
+    FILE* fout;
     const rmat_t &r_;
     mutable degree_dist<node_t> deg_stats;
     size_t block_size_;

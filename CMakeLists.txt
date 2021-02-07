@@ -227,8 +227,9 @@ endif()
 
 # glob general sources
 file(GLOB_RECURSE RMAT_SOURCES "${PROJECT_SOURCE_DIR}/rmat/*.[ch]pp")
-file(GLOB_RECURSE EXECUTABLES "${PROJECT_SOURCE_DIR}/benchmark/*.cpp")
-file(GLOB_RECURSE EXECUTABLES "${PROJECT_SOURCE_DIR}/interface/*.cpp")
+#file(GLOB_RECURSE EXECUTABLES "${PROJECT_SOURCE_DIR}/benchmark/*.cpp")
+#file(GLOB_RECURSE EXECUTABLES "${PROJECT_SOURCE_DIR}/interface/*.cpp")
+file(GLOB_RECURSE EXECUTABLES "${PROJECT_SOURCE_DIR}/app/*.cpp")
 
 ################################################################################
 ### Build library
