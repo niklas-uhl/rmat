@@ -12,6 +12,9 @@ namespace rmat {
 
 // Allocate memory using huge pages
 void* alloc_hugepage(size_t size) {
+#ifndef MADV_HUGEPAGE
+    return malloc(size);
+#else
     constexpr bool debug = false;
 
     constexpr size_t alignment = 2 * 1024 * 1024;
@@ -20,6 +23,7 @@ void* alloc_hugepage(size_t size) {
     void* ptr = aligned_alloc(alignment, bytes);
     madvise(ptr, bytes, MADV_HUGEPAGE);
     return ptr;
+#endif
 }
 
 // Allocate memory, using huge pages for allocations larger than 1MB
