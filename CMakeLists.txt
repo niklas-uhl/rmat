@@ -228,6 +228,7 @@ endif()
 # glob general sources
 file(GLOB_RECURSE RMAT_SOURCES "${PROJECT_SOURCE_DIR}/rmat/*.[ch]pp")
 file(GLOB_RECURSE EXECUTABLES "${PROJECT_SOURCE_DIR}/benchmark/*.cpp")
+file(GLOB_RECURSE EXECUTABLES "${PROJECT_SOURCE_DIR}/interface/*.cpp")
 
 ################################################################################
 ### Build library
@@ -241,7 +242,7 @@ target_link_libraries(rmat ${RMAT_LINK_LIBRARIES})
 ################################################################################
 ### Build all the executables
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/benchmark")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/app")
 foreach(target ${EXECUTABLES})
   get_filename_component(target_name ${target} NAME_WE)
   add_executable(${target_name} ${target})

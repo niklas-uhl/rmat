@@ -80,11 +80,12 @@ public:
     static constexpr const char* name = "fixdepth";
 
     template <typename RNG>
-    rmat(RNG &rng, int log_n_, double a_, double b_, double c_) :
+    rmat(RNG &rng, int log_n_, double a_, double b_, double c_, const std::string &output_file_) :
         quad({a_, b_, c_, 1.0 - (a_ + b_ + c_)}),
         log_n(log_n_),
         node_mask((path{1} << log_n_) - 1),
-        scramble_state(graph500::init_scramble_state(rng, log_n))
+        scramble_state(graph500::init_scramble_state(rng, log_n)),
+        output_file(output_file_)
     {
         sLOG << "RMAT: need" << 2 * log_n << "path bits";
         sLOG << "RMAT: node extraction mask" << std::hex << node_mask;
@@ -223,6 +224,10 @@ public:
         return table.size();
     }
 
+    const std::string get_output_file() const {
+        return output_file.c_str();
+    }
+
     tlx::Aggregate<double> get_depth_stats() const {
         return stats.samples_per_edge;
     }
@@ -286,6 +291,7 @@ protected:
     unsigned marker_pos;
     prefix marker_removal_mask;
     int table_depth;
+    const std::string output_file;
 
     graph500::scramble_state scramble_state;
 

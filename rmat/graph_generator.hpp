@@ -18,6 +18,7 @@
 
 #include <atomic>
 #include <mutex>
+#include <iostream>
 
 // namespace rmat {
 
@@ -108,15 +109,13 @@ protected:
         rmat::timer t;
         RNG gen(seed + block);
         std::vector<std::pair<node_t, node_t>> dummy(1);
-        auto cb = [&](const node_t &src, const node_t &dst) {
-            LOG0 << "got edge (" << std::hex << src << ", " << dst << ")";
-            if constexpr (stats) {
-                thread_deg_stats.add_edge(src, dst);
-            } else {
-                dummy[0] = std::make_pair(src, dst);
-            }
+        std::string output = r_.get_output_file();
+        FILE *fout = fopen(output.c_str(), "w+");
+        auto log_cb = [&](const node_t &src, const node_t &dst) {
+            fprintf(fout, "e %lu %lu\n", src, dst);
         };
-        r_.get_edges(cb, min, max, gen);
+        r_.get_edges(log_cb, min, max, gen);
+        fclose(fout);
         double duration = t.get();
         sLOGC(verbose) << "Block" << block << "time" << duration;
         return duration;
